@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:spotify/models/music.dart';
 import 'package:spotify/screens/home.dart';
@@ -13,13 +15,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  String audioset = "assets/";
   final AudioPlayer _audioPlayer = new AudioPlayer();
-  bool isPlaying = false;
 
   var Tabs = [];
   Music? music;
   int currentTabIndex = 0;
-
+  bool isPlaying = false;
 //  Widget miniPlayer(Music? music, {bool stop =  false}){
 
   Widget miniPlayer(Music? music, {bool stop = false}) {
@@ -30,9 +33,14 @@ class _MyAppState extends State<MyApp> {
     if (music == null) {
       return SizedBox();
     }
+
     if (stop) {
       isPlaying = false;
-      _audioPlayer.stop;
+      _audioPlayer.stop(); // Corrected function call
+    }else {
+      //  isPlaying = true;
+      //      _audioPlayer
+      //               .play(UrlSource(music.audioUrl)); // Start playing
     }
     return AnimatedContainer(
       duration: const Duration(microseconds: 500),
@@ -50,25 +58,45 @@ class _MyAppState extends State<MyApp> {
             music.name,
             style: TextStyle(color: Colors.white, fontSize: 20),
           ),
+          //   IconButton(
+          //       // ignore: void_checks
+          //       onPressed: () async {
+
+          //         isPlaying = !isPlaying;
+          //         if (isPlaying) {
+          //           await _audioPlayer.play(UrlSource(music.audioUrl));
+
+          //         } else {
+          //           await _audioPlayer.pause();
+          //         }
+          //       },
+          //       icon: isPlaying
+          //           ? Icon(
+          //               Icons.pause,
+          //               color: Colors.white,
+          //             )
+          //           : Icon(
+          //               Icons.play_arrow,
+          //               color: Colors.white,
+          //             ))
+
           IconButton(
-              // ignore: void_checks
-              onPressed: () async* {
-                isPlaying = !isPlaying;
-                if (isPlaying) {
-                  await _audioPlayer.play(UrlSource(music.audioUrl));
-                } else {
-                  await _audioPlayer.pause();
-                }
-              },
-              icon: isPlaying
-                  ? Icon(
-                      Icons.pause,
-                      color: Colors.white,
-                    )
-                  : Icon(
-                      Icons.play_arrow,
-                      color: Colors.white,
-                    ))
+            onPressed: () async {
+              if (isPlaying) {
+                await _audioPlayer.pause(); // Pause playback
+              } else {
+                await _audioPlayer
+                    .play(UrlSource(music.audioUrl)); // Start playing
+              }
+
+              setState(() {
+                isPlaying = !isPlaying; // Toggle the isPlaying state
+              });
+            },
+            icon: isPlaying
+                ? Icon(Icons.pause, color: Colors.white)
+                : Icon(Icons.play_arrow, color: Colors.white),
+          ),
         ],
       ),
     );
