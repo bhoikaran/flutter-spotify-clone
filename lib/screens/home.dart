@@ -5,7 +5,12 @@ import 'package:spotify/services/Category_oprations.dart';
 import 'package:spotify/services/music_oprations.dart';
 
 class Home extends StatelessWidget {
-  const Home({super.key});
+  
+
+
+Function _miniPlayer;
+
+ Home(this._miniPlayer);
 
   Widget createAppbar() {
     return AppBar(
@@ -24,22 +29,29 @@ class Home extends StatelessWidget {
 
   Widget createCategory(Category category) {
     return Container(
-      color: Colors.blueGrey.shade300,
+      decoration: BoxDecoration(
+        color: Colors.blueGrey.shade300,
+        borderRadius: BorderRadius.circular(5),
+      ),
       child: Row(
         children: [
-          Image.network(
-            category.imageUrl,
-            fit: BoxFit.cover,
-            width: 70,
-            height: 70,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: Image.network(
+              category.imageUrl,
+              fit: BoxFit.cover,
+              width: 70,
+              height: 70,
+            ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
+          SizedBox(width: 8),
+          Flexible(
             child: Text(
               category.name,
               style: TextStyle(color: Colors.white),
-               overflow: TextOverflow.ellipsis, // Adds ellipsis (...) if text overflows
-              maxLines: 1, // Ensures the text is displayed in a single line
+              overflow: TextOverflow
+                  .ellipsis, // Adds ellipsis (...) if text overflows
+              maxLines: 2, // Ensures the text is displayed in a single line
             ),
           )
         ],
@@ -60,27 +72,48 @@ class Home extends StatelessWidget {
   }
 
   Widget createMusic(Music music) {
-    return Padding(
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5),
+      ),
       padding: const EdgeInsets.all(10.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 200,
-            width: 200,
-            child: Image.network(
-              music.image,
-              fit: BoxFit.cover,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(5),
+            child: SizedBox(
+              height: 200,
+              width: 200,
+              child: InkWell(
+                onTap: (){
+                    _miniPlayer(music);
+                },
+                child: Image.network(
+                  music.image,
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           ),
-          Text(
-            music.name,
-            style: TextStyle(color: Colors.white),
+          Flexible(
+            child: Text(
+              music.name,
+              style: TextStyle(color: Colors.white),
+               overflow: TextOverflow
+                  .ellipsis, 
+              maxLines: 2,
+            ),
           ),
-          Text(
-            music.desc,
-            style: TextStyle(color: Colors.white),
-          )
+          Flexible(
+            child: Text(
+              music.desc,
+              style: TextStyle(color: Colors.white),
+              overflow: TextOverflow
+                  .ellipsis, // Adds ellipsis (...) if text overflows
+              maxLines: 2, // Ensures the text is displayed in a single line
+            ),
+          ),
         ],
       ),
     );
@@ -91,6 +124,7 @@ class Home extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 10),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
@@ -99,7 +133,7 @@ class Home extends StatelessWidget {
               fontSize: 20,
             ),
           ),
-          Container(
+          SizedBox(
             height: 300,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
