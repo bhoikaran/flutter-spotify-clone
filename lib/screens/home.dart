@@ -38,6 +38,8 @@ class Home extends StatelessWidget {
             child: Text(
               category.name,
               style: TextStyle(color: Colors.white),
+               overflow: TextOverflow.ellipsis, // Adds ellipsis (...) if text overflows
+              maxLines: 1, // Ensures the text is displayed in a single line
             ),
           )
         ],
@@ -57,21 +59,67 @@ class Home extends StatelessWidget {
     return categories;
   }
 
+  Widget createMusic(Music music) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 200,
+            width: 200,
+            child: Image.network(
+              music.image,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Text(
+            music.name,
+            style: TextStyle(color: Colors.white),
+          ),
+          Text(
+            music.desc,
+            style: TextStyle(color: Colors.white),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget createMusicList(String label) {
     List<Music> musicList = MusicOprations.getMusic();
-    return ListView.builder(
-      itemBuilder: (context, index) {},
-      itemCount: musicList.length,
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: Column(
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+            ),
+          ),
+          Container(
+            height: 300,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemBuilder: (context, index) {
+                return createMusic(musicList[index]);
+              },
+              itemCount: musicList.length,
+            ),
+          ),
+        ],
+      ),
     );
-
   }
 
   Widget createGrid() {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      height: 350,
+      height: 285,
       child: GridView.count(
-        childAspectRatio: 5 / 2,
+        childAspectRatio: 6 / 2,
         crossAxisCount: 2,
         mainAxisSpacing: 10,
         crossAxisSpacing: 10,
@@ -82,23 +130,28 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-        Colors.blueGrey.shade300,
-        Colors.black,
-        Colors.black,
-        Colors.black
-      ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
-      child: Column(
-        children: [
-          createAppbar(),
-          SizedBox(
-            height: 5,
-          ),
-          createGrid()
-        ],
-      ),
+    return SingleChildScrollView(
+      child: SafeArea(
+          child: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+          Colors.blueGrey.shade300,
+          Colors.black,
+          Colors.black,
+          Colors.black
+        ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
+        child: Column(
+          children: [
+            createAppbar(),
+            SizedBox(
+              height: 5,
+            ),
+            createGrid(),
+            createMusicList('Made for you'),
+            createMusicList('Popular Playlist'),
+          ],
+        ),
+      )),
     );
   }
 }
